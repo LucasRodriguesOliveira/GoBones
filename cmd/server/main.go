@@ -1,41 +1,32 @@
 package main
 
 import (
+	"fmt"
+
+	"github.com/LucasRodriguesOliveira/GoBones/core/server"
+	"github.com/LucasRodriguesOliveira/GoBones/core/server/pipeline"
 	GoBones "github.com/LucasRodriguesOliveira/GoBones/internal/http"
 
-	"fmt"
-	"log"
 	"net/http"
 )
 
-func Handler(r *GoBones.Request) *GoBones.Response {
-	Headers := map[string]string{
-		"Content-Type": "text/plain",
-	}
+func Handler(req *GoBones.Request, res *GoBones.Response) error {
+	res.Body = append([]byte("Hello, "), req.Body...)
+	res.Headers = map[string]string{"Content-Type": "text/plain"}
+	res.Status = http.StatusOK
 
-	return &GoBones.Response{
-		Status:  http.StatusOK,
-		Headers: Headers,
-		Body:    append([]byte("Hello, "), r.Body...),
-	}
+	return nil
 }
 
 func main() {
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		defer r.Body.Close()
+	server := &server.Server{
+		Config:  server.Config{Port: 8080},
+		Startup: pipeline.Pipeline[func(req *GoBones.Request, res *GoBones.Response) error]{},
+		Hooks:   pipeline.Pipeline[func(req *GoBones.Request, res *GoBones.Response) error]{},
+	}
 
-		req, err := GoBones.ParseRequest(r)
+	server.Hooks.Register(GoBones.Logger, pipeline.PIPELINE_REGISTER_BEFORE)
 
-		if err != nil {
-			http.Error(w, "Bad Request", http.StatusBadRequest)
-			return
-		}
-
-    res := GoBones.Logger(Handler)(req)
-
-		GoBones.WriteResponse(w, res)
-	})
-
-	fmt.Println("=> Server started at localhost:8080")
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	fmt.Println("Starting server...")
+	server.Start()
 }

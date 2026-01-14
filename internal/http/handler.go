@@ -1,3 +1,3 @@
 package http
 
-type HandlerFunc func(*Request) *Response
+type HandlerFunc func(*Request, *Response) error
