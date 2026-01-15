@@ -30,20 +30,21 @@ package main
 
 import (
   "fmt"
+  "net/http"
 
   GB  "github.com/LucasRodriguesOliveira/GoBones/core/server"
-  "github.com/LucasRodriguesOliveira/GoBones/internal/http"
+  GBH "github.com/LucasRodriguesOliveira/GoBones/internal/http"
 )
 
-func Hello(req *http.Request, res *http.Response) error {
-  res.Ok(http.J{ "message": "Hello" })
+func Hello(req *GBH.Request, res *GBH.Response) error {
+  res.Ok(GBH.J{ "message": "Hello" })
 
   return nil
 }
 
 func main() {
   app := GB.New(8080)
-  app.Router.Register("/", "Get", Hello)
+  app.Router.Register("/", http.MethodGet, Hello)
 
   fmt.Println("Starting server at port 8080...")
   app.Start()
