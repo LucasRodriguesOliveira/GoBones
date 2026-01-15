@@ -33,12 +33,12 @@ func (s *Server) Start() {
 
 	port := fmt.Sprint(s.Config.Port)
 
-	if !isPortAvailable(port) {
+	if isPortInUse(port) {
 		log.Fatalf("Port [%s] not available\n", port)
 	}
 
 	if err := s.Startup.Before(nil, nil); err != nil {
-		log.Fatal("Could not startup the server...")
+		log.Fatal("Error while running startup `before` hooks...")
 	}
 
 	// Normal execution and routes registering
@@ -86,7 +86,7 @@ func (s *Server) Start() {
 	}
 
 	if err := s.Startup.After(nil, nil); err != nil {
-		log.Fatal("Error while running stop hooks...")
+		log.Fatal("Error while running startup `after` hooks...")
 	}
 
 	if err := http.ListenAndServe(net.JoinHostPort("", port), nil); err != nil {

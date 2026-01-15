@@ -32,7 +32,7 @@ func (r *Response) jsonHeader() {
 
 func (r *Response) jsonBody(body J) {
 	r.jsonHeader()
-	content := []string{"{"}
+	var content []string
 
 	for k, v := range body {
 		switch v.(type) {
@@ -43,9 +43,9 @@ func (r *Response) jsonBody(body J) {
 		}
 	}
 
-	content = append(content, "}")
+	contentStr := fmt.Sprintf("{ %s }", strings.Join(content, ","))
 
-	r.Body = fmt.Appendln([]byte(strings.Join(content, ",")))
+	r.Body = fmt.Appendln([]byte(contentStr))
 }
 
 func (r *Response) Ok(body J) {

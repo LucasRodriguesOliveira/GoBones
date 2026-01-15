@@ -1,23 +1,16 @@
 package server
 
 import (
-	"context"
-	"fmt"
 	"net"
-	"time"
 )
 
-func isPortAvailable(port string) bool {
-	var d net.Dialer
-  addres := fmt.Sprintf("localhost:%s", port)
-	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
-	defer cancel()
-  
-	conn, err := d.DialContext(ctx, "tcp", addres)
+func isPortInUse(port string) bool {
+	listener, err := net.Listen("tcp", net.JoinHostPort("", port))
 
-  if conn != nil {
-    defer conn.Close()
-  }
+	if err != nil {
+		return true
+	}
 
-	return err != nil
+	defer listener.Close()
+	return false
 }
