@@ -79,4 +79,6 @@ func main() {
 
 That's it. GoBones is made to be simple.
 
+GoBones is intentionally small. If you need more, compose around it.
+
 Try it on!
