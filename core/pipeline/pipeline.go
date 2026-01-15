@@ -1,8 +1,6 @@
 package pipeline
 
 import (
-	"fmt"
-
 	"github.com/LucasRodriguesOliveira/GoBones/internal/http"
 )
 
@@ -49,11 +47,9 @@ func (p *Pipeline[T]) run(
 }
 
 func (p *Pipeline[T]) Before(req *http.Request, res *http.Response) error {
-	fmt.Println("Running Before Hooks")
 	return p.run(p.before, req, res)
 }
 
 func (p *Pipeline[T]) After(req *http.Request, res *http.Response) error {
-	fmt.Println("Running After Hooks")
 	return p.run(p.after, req, res)
 }
